@@ -103,14 +103,3 @@ if 'df' in locals():
     plt.xticks(range(len(heatmap_data.columns)), heatmap_data.columns)
     plt.yticks(range(len(heatmap_data.index)), heatmap_data.index)
     plt.colorbar()
-    @st.cache_data
-
-    def load_data(file_path):
-    data = pd.read_csv(file_path)
-    data['date'] = pd.to_datetime(data['date'])
-    return data
-if uploaded_file:
-    df = load_data(uploaded_file)
-else:
-    df = load_data(DEFAULT_FILE)
-    st.pyplot(plt)
