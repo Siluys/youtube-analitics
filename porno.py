@@ -4,11 +4,23 @@ import matplotlib.pyplot as plt
 
 st.title("📊 Аналітика YouTube-каналу")
 
-# Завантаження файлу
+import os
+
+DEFAULT_FILE = "test_youtube.csv"
+
 uploaded_file = st.file_uploader("Завантаж CSV файл", type=["csv"])
 
-if uploaded_file:
+if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
+elif os.path.exists(DEFAULT_FILE):
+    df = pd.read_csv(DEFAULT_FILE)
+    st.info(f"📁 Використовується файл за замовчуванням: {DEFAULT_FILE}")
+else:
+    st.warning("Будь ласка, завантажте файл або додайте 'test_youtube.csv' у папку з проєктом.")
+    st.stop() 
+
+if 'df' in locals():
+    df['date'] = pd.to_datetime(df['date'])
     
     # Перетворення дати
     df['date'] = pd.to_datetime(df['date'])
@@ -91,4 +103,13 @@ if uploaded_file:
     plt.xticks(range(len(heatmap_data.columns)), heatmap_data.columns)
     plt.yticks(range(len(heatmap_data.index)), heatmap_data.index)
     plt.colorbar()
+    @st.cache_data
+def load_data(file_path):
+    data = pd.read_csv(file_path)
+    data['date'] = pd.to_datetime(data['date'])
+    return data
+if uploaded_file:
+    df = load_data(uploaded_file)
+else:
+    df = load_data(DEFAULT_FILE)
     st.pyplot(plt)
